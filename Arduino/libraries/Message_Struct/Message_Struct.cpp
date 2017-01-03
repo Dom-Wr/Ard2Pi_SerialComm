@@ -12,7 +12,7 @@ void Message_Struct::EncodeMagn(double heading)
     float heading_float = (float) heading;
     //byte bytes[4];
 
-    float_to_bytes(&bytes[0], heading_float);
+    float_to_bytes(&bytes_send[0], heading_float);
 
     //Output statements for debugging EncodeMagn() function
     /*
@@ -30,17 +30,17 @@ void Message_Struct::EncodeMagn(double heading)
 
 void Message_Struct::send()
 {
-  /*
-  for (int i=0; i<4; i++)
-  {
-    Serial.write(bytes[i]);
-  }
-  */
 
-  Serial.write(bytes, 4);
+  Serial.write(bytes_send, 4);
 
+}
 
-  //Serial.println();
+void Message_Struct::receive()
+{
+  //Insert Arduino logic for reading byte data from serial port
+  //Read byte format
+  //bytes_receive = Serial.read();
+  Serial.readBytes(bytes_receive, 4);
 }
 
 double Message_Struct::DecodeMagn()
@@ -59,3 +59,58 @@ void float_to_bytes (byte* bytes_arr, float floatval)
   u.a = floatval;
   memcpy (bytes_arr, u.bytes, 4);
 }
+
+float bytes_to_float (byte* bytes_arr)
+{
+  union
+  {
+    float a;
+    unsigned char bytes [4];
+  } u;
+
+  //u.bytes = bytes_arr;
+  memcpy(u.bytes, bytes_arr, 4);
+
+  return u.a;
+}
+
+void int_to_bytes (byte* bytes_arr, int intval)
+{
+  union
+  {
+    int a;
+    unsigned char in_bytes[4];
+  } u;
+
+  u.a = intval;
+  memcpy (bytes_arr, u.in_bytes, 4);
+}
+
+int bytes_to_int(byte* bytes_arr)
+{
+  union
+  {
+    int a;
+    unsigned char bytes [4];
+  } u;
+
+  memcpy(u.bytes, bytes_arr, 4);
+}
+
+
+
+
+/*
+unsigned char bytes_to_char_arr (byte* bytes_arr)
+{
+  union
+  {
+    unsigned char inc_bytes [];
+    unsigned char bytes [];
+  } u;
+
+  u.inc_bytes = bytes_arr;
+
+  return  u.bytes;
+}
+*/
