@@ -13,9 +13,18 @@ class WheelBotMsg:
         self.WheelBotTlm = WheelBotTlm()
         self.ArduinoLoc = ArduinoLoc
         self.ser = serial.Serial(ArduinoLoc, 9600)
+
+        self.csvfile = open('heading.csv', 'wb')
+        self.writer = csv.writer(self.csvfile)
+        self.rowlogcounter = 0
+        self.log_frequency = 3
+
         self.run_comm = False
+        self.data_logging = False
         self.bytes_rcv = []
         self.bytes_send = []
+
+
 
 
     def receive(self):
@@ -25,7 +34,9 @@ class WheelBotMsg:
         #print "The receive function is running"
 
         frequency = .020
+        #log_frequency = 3
         start_time = time.time()
+        log_time = time.time()
 
         while self.run_comm == True :
             self.ser.write('1') #Tells Arduino to send heading
@@ -44,6 +55,12 @@ class WheelBotMsg:
 
                 self.decode(bytes_rcv)
 
+                if self.data_logging == True:
+                    if self.rowlogcounter < 20:
+                        if ((time.time() - log_time) >= self.log_frequency):
+                            self.log_data()
+                            self.rowlogcounter += 1
+                            log_time = time.time()
 
             time.sleep(frequency)
             #print("--- %s seconds ---" % (time.time() - start_time))
@@ -59,6 +76,12 @@ class WheelBotMsg:
         #print "This is the decode heading:",
         #print self.WheelBotTlm.heading
         #if the value is a int value
+
+    def log_data(self):
+        #print "Data log function running"
+        #print self.data_logging
+        self.writer.writerow(self.WheelBotTlm.heading)
+        #print "logging data"
 
     def encode(self):
         #functionality for encoding data into bytes that will be sent
