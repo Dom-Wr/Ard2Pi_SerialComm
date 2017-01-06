@@ -5,6 +5,7 @@ from struct import *
 import time
 import csv
 import threading
+import math
 
 
 class WheelBotMsg:
@@ -17,7 +18,7 @@ class WheelBotMsg:
         self.csvfile = open('heading.csv', 'wb')
         self.writer = csv.writer(self.csvfile)
         self.rowlogcounter = 0
-        self.log_frequency = 3
+        self.log_frequency = .5
 
         self.run_comm = False
         self.data_logging = False
@@ -71,7 +72,9 @@ class WheelBotMsg:
         #functionality for decoding bytes received from Serial port
 
         #if the value is a float value
-        self.WheelBotTlm.heading = unpack(self.WheelBotTlm.bytes_rcv_form, bytes_rcv)
+        raw_data_tuple = unpack(self.WheelBotTlm.bytes_rcv_form, bytes_rcv)
+        #print type(raw_data_tuple)
+        self.WheelBotTlm.heading = raw_data_tuple[0]
 
         #print "This is the decode heading:",
         #print self.WheelBotTlm.heading
@@ -80,7 +83,10 @@ class WheelBotMsg:
     def log_data(self):
         #print "Data log function running"
         #print self.data_logging
-        self.writer.writerow(self.WheelBotTlm.heading)
+        multifact = 180.0/math.pi
+        heading_deg = self.WheelBotTlm.heading * 180.0/math.pi
+        csv_row = [str(heading_deg), str(self.WheelBotTlm.heading)]
+        self.writer.writerow(csv_row)
         #print "logging data"
 
     def encode(self):

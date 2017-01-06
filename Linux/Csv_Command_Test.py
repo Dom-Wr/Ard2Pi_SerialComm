@@ -20,7 +20,7 @@ class MyPrompt(Cmd):
 
     def do_heading_print(self,args):
         """Prints the current heading of the Rover"""
-        print Message.WheelBotTlm.heading
+        print Message.WheelBotTlm.heading[0]
 
     def do_log_data(self, args):
         """Begins logging data to csv file"""
