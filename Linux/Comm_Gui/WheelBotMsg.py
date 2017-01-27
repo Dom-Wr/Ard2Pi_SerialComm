@@ -39,31 +39,32 @@ class WheelBotMsg:
         start_time = time.time()
         log_time = time.time()
 
-        while self.run_comm == True :
-            self.ser.write('1') #Tells Arduino to send heading
-            #print "Arduino has been told to send heading"
-            #print self.ser.in_waiting
-            while self.ser.in_waiting > 0:
-                #print "Serial port is in waiting"
-                start_time = time.time()
-                bytes_rcv = self.ser.read(4)
-                #print "This is 4 bytes",
-                #print bytes_rcv
+        #while self.run_comm == True :
 
-                #print "End of 4 bytes"
+        self.ser.write('1') #Tells Arduino to send heading
+        #print "Arduino has been told to send heading"
+        #print self.ser.in_waiting
+        while self.ser.in_waiting > 0:
+            #print "Serial port is in waiting"
+            start_time = time.time()
+            bytes_rcv = self.ser.read(4)
+            #print "This is 4 bytes",
+            #print bytes_rcv
 
-                #print ''.join( [ "%02X " % ord( x ) for x in bytes_rcv]).strip()
+            #print "End of 4 bytes"
 
-                self.decode(bytes_rcv)
+            #print ''.join( [ "%02X " % ord( x ) for x in bytes_rcv]).strip()
 
-                if self.data_logging == True:
-                    if self.rowlogcounter < 20:
-                        if ((time.time() - log_time) >= self.log_frequency):
-                            self.log_data()
-                            self.rowlogcounter += 1
-                            log_time = time.time()
+            self.decode(bytes_rcv)
 
-            time.sleep(frequency)
+            if self.data_logging == True:
+                if self.rowlogcounter < 20:
+                    if ((time.time() - log_time) >= self.log_frequency):
+                        self.log_data()
+                        self.rowlogcounter += 1
+                        log_time = time.time()
+
+            #time.sleep(frequency)
             #print("--- %s seconds ---" % (time.time() - start_time))
 
 
@@ -75,6 +76,7 @@ class WheelBotMsg:
         raw_data_tuple = unpack(self.WheelBotTlm.bytes_rcv_form, bytes_rcv)
         #print type(raw_data_tuple)
         self.WheelBotTlm.heading = raw_data_tuple[0]
+        self.WheelBotTlm.heading_deg = self.WheelBotTlm.heading * 180.0/math.pi
 
         #print "This is the decode heading:",
         #print self.WheelBotTlm.heading
@@ -94,12 +96,13 @@ class WheelBotMsg:
         bytes_send = pack(self.WheelBotCmds.bytes_send_form, self.WheelBotCmds.cmd1,
              self.WheelBotCmds.kp, self.WheelBotCmds.ki, self.WheelBotCmds.kd)
 
-        print ''.join( [ "%02X " % ord( x ) for x in bytes_send]).strip()
+        #print ''.join( [ "%02X " % ord( x ) for x in bytes_send]).strip()
         return bytes_send
 
 
     def send(self, bytes_snd):
         #function for sending messages back to the Arduino
+        bytes_snd = self.encode()
         self.ser.write(bytes_snd)
 
     def RunComm(self):
@@ -109,6 +112,11 @@ class WheelBotMsg:
         t.daemon = True
         t.start()
         print t.isAlive()
+
+    def Rcv_Send(self):
+        #print "Rcv_Send is runnning"
+        self.receive()
+        self.send(self.bytes_send)
 
 
 class WheelBotCmds:
@@ -122,4 +130,5 @@ class WheelBotCmds:
 class WheelBotTlm:
     def __init__(self):
         self.heading = 0
+        self.heading_deg = 0
         self.bytes_rcv_form = '<f'
