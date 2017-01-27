@@ -2,6 +2,7 @@
 #include "string.h"
 
 void float_to_bytes (byte *bytes_arr, float floatval);
+float bytes_to_float (byte* bytes_arr);
 
 Message_Struct::Message_Struct ()
 {}
@@ -40,7 +41,14 @@ void Message_Struct::receive()
   //Insert Arduino logic for reading byte data from serial port
   //Read byte format
   //bytes_receive = Serial.read();
+  byte byte_rcv_fmt[4];
+  Serial.readBytes(byte_rcv_fmt, 4);
   Serial.readBytes(bytes_receive, 4);
+  float fval = bytes_to_float(bytes_receive);
+
+  /*
+  cout << "The float val is: " << fval << endl;
+  */
 }
 
 double Message_Struct::DecodeMagn()
