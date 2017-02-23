@@ -27,7 +27,6 @@ class WheelBotMsg:
 
 
 
-
     def receive(self):
         #functionality for receiving information
 
@@ -98,8 +97,10 @@ class WheelBotMsg:
         return bytes_send
 
 
-    def send(self, bytes_snd):
+    def send(self):
         #function for sending messages back to the Arduino
+        floatval = 1.234
+        bytes_snd = pack(floatval)
         self.ser.write(bytes_snd)
 
     def RunComm(self):

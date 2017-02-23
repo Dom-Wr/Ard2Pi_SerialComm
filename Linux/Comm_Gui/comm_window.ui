@@ -114,14 +114,25 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="PId_Loop_Gain">
-           <property name="text">
-            <string>PID Loop Gains</string>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignCenter</set>
-           </property>
-          </widget>
+          <layout class="QHBoxLayout" name="GainTtl_SndCmd_lo">
+           <item>
+            <widget class="QLabel" name="PId_Loop_Gain">
+             <property name="text">
+              <string>PID Loop Gains</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="SendCmds_checkBox">
+             <property name="text">
+              <string>Send Commands</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
           <layout class="QHBoxLayout" name="K_pLayout">

@@ -31,6 +31,9 @@ class WheelBot_CommConsole(QtGui.QMainWindow, Ui_Comm_Window):
         self.headingPlot = HeadingPlotCanvas(None, width=5, height=4, dpi=100)
         self.Lo_Plots.addWidget(self.headingPlot)
 
+        #Connect Send Commands checkbox to start sending Commands
+        
+
     def serialPorts(self):
         if sys.platform.startswith('win'):
             ports = ['COM%s' % (i + 1) for i in range(256)]

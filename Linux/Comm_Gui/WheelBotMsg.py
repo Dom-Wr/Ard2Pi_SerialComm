@@ -100,9 +100,10 @@ class WheelBotMsg:
         return bytes_send
 
 
-    def send(self, bytes_snd):
+    def send(self):
         #function for sending messages back to the Arduino
         bytes_snd = self.encode()
+        self.ser.write('2')
         self.ser.write(bytes_snd)
 
     def RunComm(self):
@@ -116,7 +117,7 @@ class WheelBotMsg:
     def Rcv_Send(self):
         #print "Rcv_Send is runnning"
         self.receive()
-        self.send(self.bytes_send)
+        self.send()
 
 
 class WheelBotCmds:

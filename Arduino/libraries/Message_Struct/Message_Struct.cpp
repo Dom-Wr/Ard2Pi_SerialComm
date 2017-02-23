@@ -41,10 +41,26 @@ void Message_Struct::receive()
   //Insert Arduino logic for reading byte data from serial port
   //Read byte format
   //bytes_receive = Serial.read();
+  float fval;
   byte byte_rcv_fmt[4];
   Serial.readBytes(byte_rcv_fmt, 4);
   Serial.readBytes(bytes_receive, 4);
-  float fval = bytes_to_float(bytes_receive);
+  fval = bytes_to_float(bytes_receive);
+
+  if (fval > 0)
+  {
+    digitalWrite(13, HIGH);
+    delay(1000);
+    digitalWrite(13, LOW);
+    delay(1000);
+    digitalWrite(13, HIGH);
+    delay(1000);
+    digitalWrite(13, LOW);
+    delay(1000);
+    digitalWrite(13, HIGH);
+    delay(1000);
+    digitalWrite(13, LOW);
+  }
 
   /*
   cout << "The float val is: " << fval << endl;
