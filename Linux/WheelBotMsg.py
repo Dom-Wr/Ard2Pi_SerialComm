@@ -21,6 +21,7 @@ class WheelBotMsg:
         self.log_frequency = .5
 
         self.run_comm = False
+        self.snd_cmds = False
         self.data_logging = False
         self.bytes_rcv = []
         self.bytes_send = []
@@ -31,7 +32,7 @@ class WheelBotMsg:
         #functionality for receiving information
 
         #frequency of reading from Arduino in seconds
-        #print "The receive function is running"
+        print "The receive function is running"
 
         frequency = .020
         #log_frequency = 3
@@ -99,17 +100,35 @@ class WheelBotMsg:
 
     def send(self):
         #function for sending messages back to the Arduino
-        floatval = 1.234
-        bytes_snd = pack(floatval)
-        self.ser.write(bytes_snd)
+        print "Mesage Send run"
+        while self.snd_cmds == True :
+            print "Send is running"
+            self.ser.write('2')
+
+            floatval = 1.234
+            bytes_snd = pack('<f',floatval)
+            #print "This is 4 bytes",
+            #print bytes_snd
+
+            #print "End of 4 bytes"
+
+            #print ''.join( [ "%02X " % ord( x ) for x in bytes_snd]).strip()
+            self.ser.write(bytes_snd)
 
     def RunComm(self):
         #function for starting Comm on a separate thread
         print "RunComm is running"
-        t = threading.Thread(target=self.receive)
-        t.daemon = True
-        t.start()
-        print t.isAlive()
+        #self.send()
+
+        #Running the Send function on its own thread
+        d = threading.Thread(target=self.send)
+        d.daemon = True
+        d.start()
+        print d.isAlive()
+        #t = threading.Thread(target=self.receive)
+        #t.daemon = True
+        #t.start()
+        #print t.isAlive()
 
 
 class WheelBotCmds:

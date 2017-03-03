@@ -3,13 +3,14 @@ from cmd import Cmd
 import time
 
 
-Message = WheelBotMsg('../../../../../dev/ttyACM0')
+Message = WheelBotMsg('../../../../../dev/ttyACM4')
 
 class MyPrompt(Cmd):
 
     def do_start_comm(self, args):
         """Starts Comm System on a different Thread and initiates Arduino"""
         Message.run_comm = True
+        Message.snd_cmds = True
         Message.RunComm()
 
     def do_stop_comm(self, args):
@@ -24,6 +25,8 @@ class MyPrompt(Cmd):
 
     def do_send_cmd(self,args):
         """Sends current commands to the Arduino"""
+        #Message.encode()
+        Message.snd_cmds = True
         Message.send()
         print "The commands have been sent to the Arduino"
 
