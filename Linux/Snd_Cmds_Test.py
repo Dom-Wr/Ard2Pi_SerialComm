@@ -3,7 +3,7 @@ from cmd import Cmd
 import time
 
 
-Message = WheelBotMsg('../../../../../dev/ttyACM4')
+Message = WheelBotMsg('../../../../../dev/ttyACM2')
 
 class MyPrompt(Cmd):
 
