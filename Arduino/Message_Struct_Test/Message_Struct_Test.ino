@@ -7,11 +7,11 @@ double heading = 1.234;
 
 void setup(){
   Serial.begin(9600);
+  //pinMode(OUTPUT, 13);
 }
 
 void loop(){
-  message.EncodeMagn(heading);
-  message.send();
-
-  delay(20);
+  message.setHeading(heading);
+  //message.num_bytes = Serial.available();
+  message.RunComm();
 }

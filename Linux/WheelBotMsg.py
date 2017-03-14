@@ -23,6 +23,7 @@ class WheelBotMsg:
         self.run_comm = False
         self.snd_cmds = False
         self.data_logging = False
+        self.need_data = True
         self.bytes_rcv = []
         self.bytes_send = []
 
@@ -40,23 +41,33 @@ class WheelBotMsg:
         log_time = time.time()
 
         while self.run_comm == True :
-            #self.ser.write('1') #Tells Arduino to send heading
+
+
+            #if self.need_data == True
+            #    self.ser.write('1') #Tells Arduino to send heading
+            #    print "Arduino has been written to:",
+            #    print self.ser.in_waiting
+            #    while self.ser.in_waiting > 0:
+            #        num_dbytes = self.ser.in_waiting
+            #        data_bytes = self.ser.read(num_dbytes)
+            #        self.decode(data_bytes, '<ff')
+            #    self.need_data = False
+
             self.send()
-            #print "Arduino has been told to send heading"
             print self.ser.in_waiting
             while self.ser.in_waiting > 0:
-                print "Serial port is in waiting"
+                #print "Serial port is in waiting"
                 start_time = time.time()
                 num_bytes = self.ser.in_waiting
                 bytes_rcv = self.ser.read(num_bytes)
-                print num_bytes
-                print "Bytes received",
-                print bytes_rcv
+                #print num_bytes
+                #print "Bytes received",
+                #print bytes_rcv
 
 
-                print ''.join( [ "%02X " % ord( x ) for x in bytes_rcv]).strip()
+                #print ''.join( [ "%02X " % ord( x ) for x in bytes_rcv]).strip()
 
-                self.decode(bytes_rcv)
+                self.decode(bytes_rcv, '<ff')
 
                 if self.data_logging == True:
                     if self.rowlogcounter < 20:
@@ -67,21 +78,23 @@ class WheelBotMsg:
 
             time.sleep(frequency)
             #self.send()
-            print("--- %s seconds ---" % (time.time() - start_time))
+            #print("--- %s seconds ---" % (time.time() - start_time))
 
 
-    def decode(self, bytes_rcv):
+    def decode(self, bytes_rcv, rcv_form):
         #functionality for decoding bytes received from Serial port
 
         #if the value is a float value
-        raw_data_tuple = unpack(self.WheelBotTlm.bytes_rcv_form, bytes_rcv)
+        raw_data_tuple = unpack(rcv_form, bytes_rcv)
         #print type(raw_data_tuple)
         self.WheelBotTlm.heading = raw_data_tuple[0]
-        self.WheelBotTlm.distance = raw_data_tuple[1]
+        self.WheelBotTlm.comm1 = raw_data_tuple[1]
+        #self.WheelBotTlm.comm2 = raw_data_tuple[2]
 
-        #print "This is the decode heading:",
+        print "This is the decode heading:",
         print self.WheelBotTlm.heading
-        print self.WheelBotTlm.distance
+        print self.WheelBotTlm.comm1
+        #print self.WheelBotTlm.comm2
         #if the value is a int value
 
     def log_data(self):
@@ -105,6 +118,7 @@ class WheelBotMsg:
     def send(self):
         #function for sending messages back to the Arduino
         print "Message Send run"
+        #self.need_data = True
         #while self.snd_cmds == True :
 
         #print "Send is running"
@@ -141,4 +155,7 @@ class WheelBotTlm:
     def __init__(self):
         self.heading = 0
         self.distance = 0
-        self.bytes_rcv_form = '<ff'
+        self.comm1 = 0
+        self.comm2 = 0
+
+        #self.bytes_rcv_form = '<ff'

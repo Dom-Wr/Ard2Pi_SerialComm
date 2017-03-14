@@ -2,12 +2,37 @@
 #include "string.h"
 
 void float_to_bytes (byte *bytes_arr, float floatval);
-float bytes_to_float (byte* bytes_arr);
+float bytes_to_float (byte* bytes_arr, int bytes_size);
 
 Message_Struct::Message_Struct ()
 {}
 
-void Message_Struct::EncodeMagn(double heading)
+void Message_Struct::RunComm()
+{
+  //num_bytes = Serial.available();
+  //if (num_bytes)
+  //{
+    receive();
+    //Decode();
+    //EncodeMagn();
+    //send();
+  //}
+
+  //Implement Conditions Checking for num_bytes here
+}
+
+void Message_Struct::setHeading(double _heading)
+{
+  heading = _heading;
+}
+
+void Message_Struct::setDistance(double _distance)
+{
+  distance = _distance;
+}
+
+
+void Message_Struct::EncodeMagn()
 {
     //typecast double to float
     float heading_float = (float) heading;
@@ -31,45 +56,38 @@ void Message_Struct::EncodeMagn(double heading)
 
 void Message_Struct::send()
 {
-
   Serial.write(bytes_send, 4);
-
 }
 
 void Message_Struct::receive()
 {
   //Insert Arduino logic for reading byte data from serial port
   //Read byte format
-  //bytes_receive = Serial.read();
-  float fval;
-  byte byte_rcv_fmt[4];
-  Serial.readBytes(byte_rcv_fmt, 4);
-  Serial.readBytes(bytes_receive, 4);
-  fval = bytes_to_float(bytes_receive);
+  //This function is to be called Arduino loop function
+  //It writes the received bytes to Message_Struct receive buffer
+  unsigned char byte_rcv[256];
+  //rcv_bytes_size = 0;
+  int num_bytes = Serial.available();
 
-  if (fval > 0)
+  if (num_bytes)
   {
-    digitalWrite(13, HIGH);
-    delay(1000);
-    digitalWrite(13, LOW);
-    delay(1000);
-    digitalWrite(13, HIGH);
-    delay(1000);
-    digitalWrite(13, LOW);
-    delay(1000);
-    digitalWrite(13, HIGH);
-    delay(1000);
-    digitalWrite(13, LOW);
+    for(int i = 0; i < num_bytes; i++)
+    {
+      byte_rcv[i] = Serial.read();
+    }
+    Serial.write(byte_rcv, num_bytes);
   }
 
-  /*
-  cout << "The float val is: " << fval << endl;
-  */
+  //memcpy(byte_rcv, bytes_receive, rcv_bytes_size);
+
+  delay(2000);
+
+  //Tested and Working
 }
 
-double Message_Struct::DecodeMagn()
+double Message_Struct::Decode()
 {
-
+  bytes_to_float(&bytes_receive[0], rcv_bytes_size);
 }
 
 void float_to_bytes (byte* bytes_arr, float floatval)
@@ -84,16 +102,16 @@ void float_to_bytes (byte* bytes_arr, float floatval)
   memcpy (bytes_arr, u.bytes, 4);
 }
 
-float bytes_to_float (byte* bytes_arr)
+float bytes_to_float (byte* bytes_arr, int bytes_size)
 {
   union
   {
     float a;
-    unsigned char bytes [4];
+    unsigned char bytes [256];
   } u;
 
   //u.bytes = bytes_arr;
-  memcpy(u.bytes, bytes_arr, 4);
+  memcpy(u.bytes, bytes_arr, bytes_size);
 
   return u.a;
 }
