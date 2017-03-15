@@ -3,6 +3,7 @@
 
 Message_Struct message;
 double heading = 1.234;
+double distance = 14.3;
 
 
 void setup(){
@@ -12,6 +13,6 @@ void setup(){
 
 void loop(){
   message.setHeading(heading);
-  //message.num_bytes = Serial.available();
+  message.setDistance(distance);
   message.RunComm();
 }

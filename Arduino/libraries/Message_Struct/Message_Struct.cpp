@@ -13,9 +13,9 @@ void Message_Struct::RunComm()
   //if (num_bytes)
   //{
     receive();
-    //Decode();
-    //EncodeMagn();
-    //send();
+    Decode();
+    Encode();
+    send();
   //}
 
   //Implement Conditions Checking for num_bytes here
@@ -32,13 +32,15 @@ void Message_Struct::setDistance(double _distance)
 }
 
 
-void Message_Struct::EncodeMagn()
+void Message_Struct::Encode()
 {
     //typecast double to float
     float heading_float = (float) heading;
+    float distance_float = (float) distance;
     //byte bytes[4];
 
     float_to_bytes(&bytes_send[0], heading_float);
+    float_to_bytes(&bytes_send[4], distance_float);
 
     //Output statements for debugging EncodeMagn() function
     /*
@@ -56,7 +58,7 @@ void Message_Struct::EncodeMagn()
 
 void Message_Struct::send()
 {
-  Serial.write(bytes_send, 4);
+  Serial.write(bytes_send, snd_bytes_size);
 }
 
 void Message_Struct::receive()
@@ -68,18 +70,18 @@ void Message_Struct::receive()
   unsigned char byte_rcv[256];
   //rcv_bytes_size = 0;
   int num_bytes = Serial.available();
-
+  rcv_bytes_size = num_bytes;
   if (num_bytes)
   {
     for(int i = 0; i < num_bytes; i++)
     {
       byte_rcv[i] = Serial.read();
     }
-    Serial.write(byte_rcv, num_bytes);
+    //Serial.write(byte_rcv, num_bytes);
   }
 
-  //memcpy(byte_rcv, bytes_receive, rcv_bytes_size);
-
+  memcpy(bytes_receive, byte_rcv, rcv_bytes_size);
+  //Serial.write(bytes_receive, rcv_bytes_size);
   delay(2000);
 
   //Tested and Working
@@ -87,7 +89,19 @@ void Message_Struct::receive()
 
 double Message_Struct::Decode()
 {
-  bytes_to_float(&bytes_receive[0], rcv_bytes_size);
+  float val1 = bytes_to_float(&bytes_receive[0], rcv_bytes_size/2);
+  float val2 = bytes_to_float(&bytes_receive[4], rcv_bytes_size/2);
+
+  comm1 = val1;
+  comm2 = val2;
+
+  //Testing Decode function
+  /*
+  unsigned char bytes_dec_test[256];
+  float_to_bytes(&bytes_dec_test[0], comm1);
+  float_to_bytes(&bytes_dec_test[4], comm2);
+  Serial.write(bytes_dec_test, rcv_bytes_size);
+  */
 }
 
 void float_to_bytes (byte* bytes_arr, float floatval)

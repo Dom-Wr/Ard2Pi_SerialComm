@@ -11,7 +11,7 @@ public:
   void setHeading(double _heading);
   void setDistance(double _distance);
 
-  void EncodeMagn();
+  void Encode();
 
   double Decode();
   void send();
@@ -20,7 +20,13 @@ public:
 private:
   double heading;
   double distance;
-  byte bytes_send[256];
+
+//Incoming values to be set to the following variables
+  float comm1;
+  float comm2;
+
+  int snd_bytes_size = 8;
+  unsigned char bytes_send[256];
   unsigned char bytes_receive[256];
   int rcv_bytes_size;
   unsigned char incom_byte_form[];
