@@ -22,8 +22,8 @@ private:
   double distance;
 
 //Incoming values to be set to the following variables
-  float comm1;
-  float comm2;
+  float des_heading;
+  float des_distance;
 
   int snd_bytes_size = 8;
   unsigned char bytes_send[256];

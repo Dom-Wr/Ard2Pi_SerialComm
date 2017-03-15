@@ -8,17 +8,10 @@ Message_Struct::Message_Struct ()
 {}
 
 void Message_Struct::RunComm()
-{
-  //num_bytes = Serial.available();
-  //if (num_bytes)
-  //{
-    receive();
+{    receive();
     Decode();
     Encode();
     send();
-  //}
-
-  //Implement Conditions Checking for num_bytes here
 }
 
 void Message_Struct::setHeading(double _heading)
@@ -68,8 +61,11 @@ void Message_Struct::receive()
   //This function is to be called Arduino loop function
   //It writes the received bytes to Message_Struct receive buffer
   unsigned char byte_rcv[256];
-  //rcv_bytes_size = 0;
   int num_bytes = Serial.available();
+
+  //Insert conditions checking for num_bytes
+  //So that the num_bytes will only be 8
+
   rcv_bytes_size = num_bytes;
   if (num_bytes)
   {
@@ -92,14 +88,14 @@ double Message_Struct::Decode()
   float val1 = bytes_to_float(&bytes_receive[0], rcv_bytes_size/2);
   float val2 = bytes_to_float(&bytes_receive[4], rcv_bytes_size/2);
 
-  comm1 = val1;
-  comm2 = val2;
+  des_heading = val1;
+  des_distance = val2;
 
   //Testing Decode function
   /*
   unsigned char bytes_dec_test[256];
-  float_to_bytes(&bytes_dec_test[0], comm1);
-  float_to_bytes(&bytes_dec_test[4], comm2);
+  float_to_bytes(&bytes_dec_test[0], des_heading);
+  float_to_bytes(&bytes_dec_test[4], des_distance);
   Serial.write(bytes_dec_test, rcv_bytes_size);
   */
 }

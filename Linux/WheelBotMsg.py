@@ -21,7 +21,6 @@ class WheelBotMsg:
         self.log_frequency = .5
 
         self.run_comm = False
-        self.snd_cmds = False
         self.data_logging = False
         self.need_data = True
         self.bytes_rcv = []
@@ -33,7 +32,7 @@ class WheelBotMsg:
         #functionality for receiving information
 
         #frequency of reading from Arduino in seconds
-        print "The receive function is running"
+        #print "The receive function is running"
 
         frequency = 2.00
         #log_frequency = 3
@@ -54,7 +53,7 @@ class WheelBotMsg:
             #    self.need_data = False
 
             self.send()
-            print self.ser.in_waiting
+            #print self.ser.in_waiting
             while self.ser.in_waiting > 0:
                 #print "Serial port is in waiting"
                 start_time = time.time()
@@ -88,12 +87,14 @@ class WheelBotMsg:
         raw_data_tuple = unpack(rcv_form, bytes_rcv)
         #print type(raw_data_tuple)
         self.WheelBotTlm.heading = raw_data_tuple[0]
-        self.WheelBotTlm.comm1 = raw_data_tuple[1]
+        self.WheelBotTlm.distance = raw_data_tuple[1]
         #self.WheelBotTlm.comm2 = raw_data_tuple[2]
 
-        print "This is the decode heading:",
-        print self.WheelBotTlm.heading
-        print self.WheelBotTlm.comm1
+        #print "This is the decoded heading:",
+        #print self.WheelBotTlm.heading
+        #print "This is the decoded distance:",
+        #print self.WheelBotTlm.comm1
+
         #print self.WheelBotTlm.comm2
         #if the value is a int value
 
@@ -111,25 +112,24 @@ class WheelBotMsg:
         bytes_send = pack(self.WheelBotCmds.bytes_send_form, self.WheelBotCmds.cmd1,
              self.WheelBotCmds.kp, self.WheelBotCmds.ki, self.WheelBotCmds.kd)
 
-        print ''.join( [ "%02X " % ord( x ) for x in bytes_send]).strip()
+        #print ''.join( [ "%02X " % ord( x ) for x in bytes_send]).strip()
         return bytes_send
 
 
     def send(self):
         #function for sending messages back to the Arduino
-        print "Message Send run"
-        #self.need_data = True
-        #while self.snd_cmds == True :
+        #print "Message Send run"
+
 
         #print "Send is running"
         #self.ser.write('2')
 
-        floatval = 1.234
-        bytes_snd = pack('<ff',floatval, floatval+5.0 )
-        print "Float to send",
-        print bytes_snd
+        #floatval = 1.234
+        bytes_snd = pack('<ff',self.WheelBotCmds.des_heading, self.WheelBotCmds.des_distance )
+        #print "Float to send",
+        #print bytes_snd
 
-        print ''.join( [ "%02X " % ord( x ) for x in bytes_snd]).strip()
+        #print ''.join( [ "%02X " % ord( x ) for x in bytes_snd]).strip()
         self.ser.write(bytes_snd)
 
     def RunComm(self):
@@ -150,6 +150,10 @@ class WheelBotCmds:
         self.ki = 1.234
         self.kd = 1.234
         self.bytes_send_form = '<ifff'
+
+        #Waypoint commands
+        self.des_heading = 0.0
+        self.des_distance = 0.0
 
 class WheelBotTlm:
     def __init__(self):

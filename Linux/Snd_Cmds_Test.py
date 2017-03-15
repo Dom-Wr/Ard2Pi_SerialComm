@@ -3,14 +3,13 @@ from cmd import Cmd
 import time
 
 
-Message = WheelBotMsg('../../../../../dev/ttyACM6')
+Message = WheelBotMsg('../../../../../dev/ttyACM7')
 
 class MyPrompt(Cmd):
 
     def do_start_comm(self, args):
         """Starts Comm System on a different Thread and initiates Arduino"""
         Message.run_comm = True
-        Message.snd_cmds = True
         Message.RunComm()
 
     def do_stop_comm(self, args):
@@ -19,16 +18,23 @@ class MyPrompt(Cmd):
         Message.data_logging = False
         raise SystemExit
 
-    def do_heading_print(self,args):
+    def do_data_print(self,args):
         """Prints the current heading of the Rover"""
-        print Message.WheelBotTlm.heading[0]
+        print Message.WheelBotTlm.heading
+        print Message.WheelBotTlm.distance
 
-    def do_send_cmd(self,args):
+    def do_send_desired(self,args):
         """Sends current commands to the Arduino"""
-        #Message.encode()
-        Message.snd_cmds = True
-        Message.send()
-        print "The commands have been sent to the Arduino"
+        des_head = float(raw_input("Enter Desired Heading: "))
+        des_dist = float(raw_input("Enter Desired Distance: "))
+        Message.WheelBotCmds.des_heading = des_head
+        Message.WheelBotCmds.des_distance = des_dist
+        print Message.WheelBotCmds.des_heading
+        print Message.WheelBotCmds.des_distance
+        print "The waypoint has been sent to the Arduino"
+
+        #adding sending down heading and distance desired.
+
 
 
     def do_log_data(self, args):
