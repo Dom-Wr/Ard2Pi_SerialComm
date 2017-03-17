@@ -8,7 +8,8 @@ Message_Struct::Message_Struct ()
 {}
 
 void Message_Struct::RunComm()
-{    receive();
+{
+    receive();
     Decode();
     Encode();
     send();
@@ -78,6 +79,8 @@ void Message_Struct::receive()
 
   memcpy(bytes_receive, byte_rcv, rcv_bytes_size);
   //Serial.write(bytes_receive, rcv_bytes_size);
+
+  //Move this functionality out to main function
   delay(2000);
 
   //Tested and Working

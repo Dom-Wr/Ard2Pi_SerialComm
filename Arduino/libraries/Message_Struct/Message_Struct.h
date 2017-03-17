@@ -12,7 +12,6 @@ public:
   void setDistance(double _distance);
 
   void Encode();
-
   double Decode();
   void send();
   void receive();

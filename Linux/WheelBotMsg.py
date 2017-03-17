@@ -152,8 +152,8 @@ class WheelBotCmds:
         self.bytes_send_form = '<ifff'
 
         #Waypoint commands
-        self.des_heading = 0.0
-        self.des_distance = 0.0
+        self.des_heading = 1.234
+        self.des_distance = 6.234
 
 class WheelBotTlm:
     def __init__(self):
