@@ -83,6 +83,11 @@ class WheelBotMsg:
     def decode(self, bytes_rcv, rcv_form):
         #functionality for decoding bytes received from Serial port
 
+        if len(bytes_rcv) != 8:
+            self.ser.flushInput()
+            self.ser.flushOutput()
+            return
+
         #if the value is a float value
         raw_data_tuple = unpack(rcv_form, bytes_rcv)
         #print type(raw_data_tuple)
